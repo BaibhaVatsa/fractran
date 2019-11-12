@@ -31,17 +31,24 @@ fn parse_list(list: &String) -> Vec<Element> {
         match c {
             '0'..='9' => {
                 match p_or_q {
-                    true => result[i].p = result[i].p * BASIS + c.to_digit(BASIS),
-                    false => result[i].q = result[i].q * BASIS + c.to_digit(BASIS),
+                    true => result[i].p = result[i].p * BASIS + match c.to_digit(BASIS) {
+                        None => 0,
+                        Some(x) => x,
+                    },
+                    false => result[i].q = result[i].q * BASIS + match c.to_digit(BASIS) {
+                        None => 0,
+                        Some(x) => x,
+                    },
                 }
-            }
+            },
             '/' => {
                 p_or_q = !p_or_q;
-            }
+            },
             ' ' => {
                 p_or_q = !p_or_q;
                 i = i + 1;
-            }
+            },
+            _ => {},
         }
     }
     return result;
