@@ -17,7 +17,7 @@ fn main() {
     let list: String = read!("{}\n");
     let mut memory: Vec<Element> = parse_list(&list);
     execute(&mut memory, &mut n);
-    print!("{:?}\n{}", memory, n);
+    print!("{} => {:?}", n, memory);
 }
 
 fn parse_list(list: &String) -> Vec<Element> {
@@ -66,12 +66,13 @@ fn execute(memory: &mut Vec<Element>, n: &mut u32) {
 				if *n % q == 0 {
 					*n = ((*n)*p)/q;
 					memory.remove(i);
-					i -= 1;
 					none_found = false;
 				}
-				i += 1;
+				if none_found {
+					i += 1;
+				}
 			}
-			println!("{} => {:?}", *n, *memory);
+			println!("\n{} => {:?}", *n, *memory);
 			if none_found {
 				end_execution = true;
 			}
