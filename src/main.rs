@@ -16,7 +16,7 @@ fn main() {
     print!("Enter the starting config: ");
     let list: String = read!("{}\n");
     let mut memory: Vec<Element> = parse_list(&list);
-    execute(&memory, &n);
+    execute(&mut memory, &mut n);
     print!("{:?}\n{}", memory, n);
 }
 
@@ -46,7 +46,7 @@ fn parse_list(list: &String) -> Vec<Element> {
             },
             ' ' => {
                 p_or_q = !p_or_q;
-                i = i + 1;
+                i += 1;
             },
             _ => {},
         }
@@ -54,6 +54,26 @@ fn parse_list(list: &String) -> Vec<Element> {
     return result;
 }
 
-fn execute(memory: &Vec<Element>, n: &u32) {
-    println!("{:?}", memory);
+fn execute(memory: &mut Vec<Element>, n: &mut u32) {
+    let mut end_execution: bool = false;
+    while memory.len() >= 1 && !end_execution {
+    	let mut i: usize = 0;
+			let mut none_found: bool = false;
+			while i < memory.len() && !none_found {
+				none_found = true;
+				let p: u32 = memory[i].p;
+				let q: u32 = memory[i].q;
+				if *n % q == 0 {
+					*n = ((*n)*p)/q;
+					memory.remove(i);
+					i -= 1;
+					none_found = false;
+				}
+				i += 1;
+			}
+			println!("{} => {:?}", *n, *memory);
+			if none_found {
+				end_execution = true;
+			}
+		}
 }
