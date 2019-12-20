@@ -10,17 +10,17 @@ struct Element {
 static BASIS: u32 = 10;
 
 fn main() {
-    print!("Welcome to fractran compiler!\n");
-    print!("Enter n: ");
+    println!("Welcome to fractran compiler!");
+    println!("Enter n");
     let mut n: u32 = read!();
-    print!("Enter the starting config: ");
+    println!("Enter the starting config");
     let list: String = read!("{}\n");
     let mut memory: Vec<Element> = parse_list(&list);
     execute(&mut memory, &mut n);
-    print!("{} => {:?}", n, memory);
+    println!("{} => {:?}", n, memory);
 }
 
-fn parse_list(list: &String) -> Vec<Element> {
+fn parse_list(list: &str) -> Vec<Element> {
     let count: usize = list.matches('/').count();
     let mut result: Vec<Element> = vec![Element{p: 0, q: 0}; count];
     let mut it = list.chars().peekable();
@@ -30,51 +30,46 @@ fn parse_list(list: &String) -> Vec<Element> {
         it.next();
         match c {
             '0'..='9' => {
-                match p_or_q {
-                    true => result[i].p = result[i].p * BASIS + match c.to_digit(BASIS) {
+                if p_or_q {
+                    result[i].p = result[i].p * BASIS + match c.to_digit(BASIS) {
                         None => 0,
                         Some(x) => x,
-                    },
-                    false => result[i].q = result[i].q * BASIS + match c.to_digit(BASIS) {
+                    }
+                } else {
+                    result[i].q = result[i].q * BASIS + match c.to_digit(BASIS) {
                         None => 0,
                         Some(x) => x,
-                    },
+                    }
                 }
             },
             '/' => {
                 p_or_q = !p_or_q;
             },
             ' ' => {
-                p_or_q = !p_or_q;
+                if result[i].p % result[i].q == 0 {
+					result[i].p /= result[i].q;
+					result[i].q = 1;
+				} 
+				p_or_q = !p_or_q;
                 i += 1;
             },
             _ => {},
         }
     }
-    return result;
+    result
 }
 
 fn execute(memory: &mut Vec<Element>, n: &mut u32) {
-    let mut end_execution: bool = false;
-    while memory.len() >= 1 && !end_execution {
-    	let mut i: usize = 0;
-			let mut none_found: bool = false;
-			while i < memory.len() && !none_found {
-				none_found = true;
-				let p: u32 = memory[i].p;
-				let q: u32 = memory[i].q;
-				if *n % q == 0 {
-					*n = ((*n)*p)/q;
-					memory.remove(i);
-					none_found = false;
-				}
-				if none_found {
-					i += 1;
-				}
-			}
-			println!("\n{} => {:?}", *n, *memory);
-			if none_found {
-				end_execution = true;
-			}
-		}
+    let mut n_val: u32 = *n; 
+    let mut i: usize = 0;
+    while i < memory.len() {
+        let p: u32 = memory[i].p;
+        let q: u32 = memory[i].q;
+        if n_val % q == 0 {
+            n_val = (n_val * p) / q;
+        } else {
+            i += 1;
+        }
+    }
+    *n = n_val;
 }
