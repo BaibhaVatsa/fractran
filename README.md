@@ -1,4 +1,4 @@
 # Fractran 
 
-Fractran interpreter. Written in Rust. 
+Fractran interpreter written in Rust. 
 Wrote it just to learn more about Rust and programming languages.
